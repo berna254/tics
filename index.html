@@ -11,14 +11,14 @@
     
     <style>
         /* =========================================
-           CONFIGURACIÓN GLOBAL (EVITA QUE SE SALGAN DE LA PANTALLA)
+           CONFIGURACIÓN GLOBAL
            ========================================= */
         *, *::before, *::after {
-            box-sizing: border-box; /* Hace que el padding no ensanche las cajas */
+            box-sizing: border-box; 
         }
 
         /* =========================================
-           1. PANTALLA DE BIENVENIDA (Para activar música)
+           1. PANTALLA DE BIENVENIDA
            ========================================= */
         #pantalla-bienvenida {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -132,10 +132,10 @@
 
         body {
             display: flex; flex-direction: column; 
-            height: 100vh; /* Respaldo */
-            height: 100dvh; /* Medida dinámica para celulares (Evita que la barra tape el footer) */
+            height: 100vh; 
+            height: 100dvh; 
             margin: 0;
-            overflow: hidden; /* Mantiene la barra de redes pegada abajo y solo desliza el contenido */
+            overflow: hidden; 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-image: url('fondo.png'); background-size: cover;
             background-position: center; background-repeat: no-repeat;
@@ -291,7 +291,7 @@
             display: flex; justify-content: space-between; align-items: center; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
             flex-wrap: wrap; z-index: 10; 
-            width: 100%; /* Ajuste importante */
+            width: 100%; 
         }
         header h1 { margin: 0; letter-spacing: 2px; font-size: 24px; font-family: 'Segoe UI', sans-serif;}
 
@@ -512,8 +512,18 @@
 
         <div id="galeria" class="tarjeta-contenido seccion" style="display: none;">
             <h2>Nuestra Galería de Nosotros</h2>
-            <p>Un pequeño vistazo a nuestros mejores momentos:</p>
-            <div class="galeria-grid">
+            <p>¡Sube una foto que tengas con nosotros para nuestra colección!</p>
+            
+            <!-- CAJA PARA SUBIR FOTOS (NUEVO) -->
+            <div style="background: rgba(255, 182, 193, 0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                <input type="file" id="input-foto" accept="image/*" style="margin-bottom: 10px; width: 100%;">
+                <button class="btn btn-quinto" onclick="subirFoto()" id="btn-subir">Subir Foto 📸</button>
+                <p id="mensaje-estado" style="font-size: 14px; font-weight: bold; color: #ff1493; margin-top: 10px;"></p>
+            </div>
+
+            <!-- CONTENEDOR DE LA GALERÍA -->
+            <div class="galeria-grid" id="contenedor-fotos-dinamicas">
+                <!-- Fotos originales que ya tenías -->
                 <img src="foto1.jpg" alt="Momento 1"> <img src="foto2.jpg" alt="Momento 2">
                 <img src="foto3.jpg" alt="Momento 3"> <img src="foto4.jpg" alt="Momento 4">
                 <img src="foto5.jpg" alt="Momento 5"> <img src="foto6.jpg" alt="Momento 6">
@@ -594,13 +604,11 @@
             
             audio.play().catch(error => { console.log("Error al reproducir: ", error); });
             
-            // Efecto de transición
             bienvenida.style.transition = "all 1s ease";
             bienvenida.style.opacity = "0";
             bienvenida.style.transform = "scale(1.2)";
             bienvenida.style.filter = "blur(10px)";
             
-            // Esperar a que acabe la animación
             setTimeout(() => { bienvenida.style.display = "none"; }, 1000);
         }
 
@@ -637,7 +645,11 @@
             document.getElementById('jardin-magico').classList.remove('mostrar'); 
         }
 
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz9026-U3UINJ3vsLn5xw8p0O6DOYBaH9o_0hYdrbJ1XOPTzZrKIAa1NKyPs6yuz5Di/exec'; 
+        // =========================================================
+        // RECUERDA: Si las fotos se siguen viendo rotas, es porque aquí
+        // necesitas pegar la NUEVA dirección que te dio el Apps Script
+        // =========================================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzG52-HE6aIo7o-QPsI0bT36AuPxnuaVFofNwBqwDUycL0_MV2UzNwky4Q-PwU3L3x2Sw/exec'; 
 
         function enviarComentario(event) {
             event.preventDefault(); 
@@ -648,12 +660,84 @@
                 body: new FormData(form),
                 mode: 'no-cors' 
             }).then(() => {
-                console.log("¡Enviado a Google Drive exitosamente!");
+                alert("Mensaje enviado con éxito!");
             }).catch(error => console.error('Error!', error.message));
 
             cerrarModal();
             form.reset();
         }
+
+        // =========================================================
+        // FUNCIONES NUEVAS PARA LA GALERÍA
+        // =========================================================
+        function subirFoto() {
+            var fileInput = document.getElementById('input-foto');
+            var mensaje = document.getElementById('mensaje-estado');
+            var btn = document.getElementById('btn-subir');
+            
+            if (fileInput.files.length === 0) { 
+                alert("Selecciona una foto primero."); 
+                return; 
+            }
+
+            var file = fileInput.files[0];
+            var reader = new FileReader();
+
+            btn.disabled = true; 
+            btn.innerText = "Subiendo...";
+            mensaje.innerText = "Enviando imagen, espera por favor... ⏳";
+
+            reader.onload = function(e) {
+                var dataURL = e.target.result;
+                var base64Data = dataURL.split(",")[1];
+                var mimeType = dataURL.split(";")[0].split(":")[1];
+
+                var formData = new URLSearchParams();
+                formData.append("fileData", base64Data);
+                formData.append("mimeType", mimeType);
+                formData.append("filename", file.name);
+
+                fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                .then(res => res.text())
+                .then(resultado => {
+                    mensaje.innerText = "¡Foto subida con éxito! 🎉";
+                    btn.innerText = "Subir Otra Foto 📸";
+                    btn.disabled = false; 
+                    fileInput.value = ""; 
+                    cargarFotosNuevas(); 
+                })
+                .catch(err => {
+                    mensaje.innerText = "Error al subir. Intenta de nuevo.";
+                    btn.disabled = false; 
+                    btn.innerText = "Subir Foto 📸";
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function cargarFotosNuevas() {
+            fetch(SCRIPT_URL + "?action=obtener_fotos")
+            .then(res => res.json())
+            .then(urls => {
+                var contenedor = document.getElementById('contenedor-fotos-dinamicas');
+                
+                // Limpia las fotos de Drive anteriores para no repetirlas
+                document.querySelectorAll('.foto-drive').forEach(foto => foto.remove());
+                
+                urls.forEach(url => {
+                    var img = document.createElement('img');
+                    img.src = url; 
+                    img.className = 'foto-drive'; 
+                    contenedor.appendChild(img);
+                });
+            })
+            .catch(error => console.error("Error al cargar fotos de Drive:", error));
+        }
+
+        // Esto hace que las fotos se carguen solitas al entrar a la página
+        window.onload = function() { 
+            cargarFotosNuevas(); 
+        };
     </script>
 
 </body>
