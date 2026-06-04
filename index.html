@@ -403,7 +403,33 @@
         .texto-cancelar { margin-top: 20px; font-size: 14px; color: rgba(255, 255, 255, 0.7); }
         .texto-cancelar b { color: white; cursor: pointer; transition: color 0.2s; }
         .texto-cancelar b:hover { color: #ff1493; }
-        @media (max-width: 800px) { header { justify-content: center; flex-direction: column; gap: 15px; } }
+
+        @media (max-width: 800px) { 
+            header { 
+                justify-content: center; 
+                flex-direction: column; 
+                gap: 10px; 
+                padding: 10px 5px; 
+            } 
+            header h1 {
+                font-size: 20px;
+                text-align: center;
+            }
+            .contenedor-botones { 
+                gap: 6px; 
+            }
+            .btn { 
+                padding: 6px 10px; 
+                font-size: 11px; 
+                margin: 2px;
+            }
+            main { 
+                padding: 20px 10px; 
+            }
+            .tarjeta-contenido { 
+                padding: 25px 15px; 
+            }
+        }
     </style>
 </head>
 <body>
