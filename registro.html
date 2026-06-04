@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirma tu Asistencia - Bernardo y Alondra</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* =========================================
+           1. CONFIGURACIÓN GENERAL Y FONDO MÁGICO
+           ========================================= */
+        body {
+            margin: 0; padding: 0; font-family: 'Montserrat', sans-serif;
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; color: #333; overflow: hidden; position: relative;
+            background: radial-gradient(circle at center, #fff0f3 0%, #fffafb 70%, #ffffff 100%);
+        }
+
+        /* =========================================
+           2. ANIMACIÓN DE FLORES CAYENDO
+           ========================================= */
+        #contenedor-flores {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
+        }
+        
+        .flor { position: absolute; color: #ffb6c1; opacity: 0; animation: caerFlor linear infinite; }
+
+        @keyframes caerFlor {
+            0% { transform: translateY(-10vh) rotate(0deg) translateX(0px); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg) translateX(50px); opacity: 0; }
+        }
+
+        /* Variaciones flores */
+        .flor:nth-child(1) { left: 5%; animation-duration: 8s; font-size: 20px; animation-delay: 0s; }
+        .flor:nth-child(2) { left: 10%; animation-duration: 12s; font-size: 14px; animation-delay: 2s; }
+        .flor:nth-child(3) { left: 15%; animation-duration: 10s; font-size: 18px; animation-delay: 4s; }
+        .flor:nth-child(4) { left: 20%; animation-duration: 14s; font-size: 12px; animation-delay: 1s; }
+        .flor:nth-child(5) { left: 25%; animation-duration: 9s; font-size: 16px; animation-delay: 6s; }
+        .flor:nth-child(6) { left: 30%; animation-duration: 11s; font-size: 15px; animation-delay: 3s; }
+        .flor:nth-child(7) { left: 35%; animation-duration: 13s; font-size: 13px; animation-delay: 5s; }
+        .flor:nth-child(8) { left: 40%; animation-duration: 8s; font-size: 19px; animation-delay: 0.5s; }
+        .flor:nth-child(9) { left: 45%; animation-duration: 12s; font-size: 14px; animation-delay: 7s; }
+        .flor:nth-child(10) { left: 50%; animation-duration: 10s; font-size: 17px; animation-delay: 2.5s; }
+        .flor:nth-child(11) { left: 55%; animation-duration: 14s; font-size: 12px; animation-delay: 4.5s; }
+        .flor:nth-child(12) { left: 60%; animation-duration: 9s; font-size: 16px; animation-delay: 1.5s; }
+        .flor:nth-child(13) { left: 65%; animation-duration: 11s; font-size: 15px; animation-delay: 6.5s; }
+        .flor:nth-child(14) { left: 70%; animation-duration: 13s; font-size: 13px; animation-delay: 3.5s; }
+        .flor:nth-child(15) { left: 75%; animation-duration: 8s; font-size: 20px; animation-delay: 0s; }
+        .flor:nth-child(16) { left: 80%; animation-duration: 12s; font-size: 14px; animation-delay: 5.5s; }
+        .flor:nth-child(17) { left: 85%; animation-duration: 10s; font-size: 18px; animation-delay: 1s; }
+        .flor:nth-child(18) { left: 90%; animation-duration: 14s; font-size: 12px; animation-delay: 7.5s; }
+        .flor:nth-child(19) { left: 95%; animation-duration: 9s; font-size: 16px; animation-delay: 2s; }
+        .flor:nth-child(20) { left: 98%; animation-duration: 11s; font-size: 15px; animation-delay: 4s; }
+
+        /* =========================================
+           3. CONTENEDOR PRINCIPAL
+           ========================================= */
+        .contenedor-formulario {
+            background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(5px);
+            padding: 50px 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
+            max-width: 500px; width: 90%; text-align: center; border-top: 5px solid #ffb6c1; 
+            position: relative; animation: aparecer 0.8s ease-out; z-index: 5;
+        }
+
+        @keyframes aparecer { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           4. TEXTOS Y DISEÑO
+           ========================================= */
+        h1 { font-family: 'Dancing Script', cursive; color: #d4af37; font-size: 42px; margin-top: 0; margin-bottom: 10px; }
+        p.subtitulo { font-size: 14px; color: #666; margin-bottom: 30px; line-height: 1.6; }
+        form { display: flex; flex-direction: column; gap: 20px; text-align: left; }
+        .grupo-input { position: relative; }
+        .grupo-input label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; color: #555; }
+        .grupo-input input[type="text"], .grupo-input select, .grupo-input textarea {
+            width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif; font-size: 14px; transition: border-color 0.3s; background-color: #fcfcfc;
+        }
+        .grupo-input input:focus, .grupo-input select:focus, .grupo-input textarea:focus { border-color: #ffb6c1; outline: none; }
+        .grupo-input i { position: absolute; top: 38px; right: 15px; color: #aaa; }
+        textarea { resize: vertical; min-height: 80px; }
+        .opciones-radio { display: flex; gap: 20px; }
+        .opcion-radio { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+        #datos-adicionales { display: none; flex-direction: column; gap: 20px; animation: aparecer 0.5s ease-out; }
+
+        /* =========================================
+           5. BOTONES
+           ========================================= */
+        .btn-enviar {
+            background: linear-gradient(135deg, #ffb6c1 0%, #ff69b4 100%); color: white; border: none;
+            padding: 15px; border-radius: 50px; font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s; margin-top: 10px; box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+        }
+        .btn-enviar:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(255, 105, 180, 0.5); }
+        .btn-enviar:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        
+        .btn-secundario {
+            background: #f8f9fa; color: #333; border: 1px solid #ddd; padding: 12px; border-radius: 50px; 
+            font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s; margin-top: 10px; 
+            flex: 1; display: flex; justify-content: center; align-items: center; gap: 8px;
+        }
+        .btn-secundario:hover { background: #eee; }
+        .enlace-volver { display: inline-block; margin-top: 25px; color: #888; text-decoration: none; font-size: 13px; text-align: center; }
+
+        /* =========================================
+           6. INVITACIÓN DIGITAL
+           ========================================= */
+        #seccion-invitacion { display: none; }
+        .tarjeta-invitacion { border: 2px solid #d4af37; padding: 30px 20px; border-radius: 15px; background-color: #fff9fa; position: relative; margin-bottom: 20px; }
+        .tarjeta-invitacion::before { content: "\f004"; font-family: "Font Awesome 6 Free"; font-weight: 900; color: #ffb6c1; font-size: 24px; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: white; padding: 0 10px; }
+        .tarjeta-invitacion h2 { font-family: 'Dancing Script', cursive; color: #333; font-size: 32px; margin-bottom: 5px; }
+        .tarjeta-invitacion h3 { color: #d4af37; font-weight: 400; letter-spacing: 2px; font-size: 14px; text-transform: uppercase; margin-top: 0;}
+        .nombre-personalizado { margin: 20px 0; padding: 15px 0; border-top: 1px dashed #eed1d5; border-bottom: 1px dashed #eed1d5; }
+        .nombre-personalizado p { font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+        .nombre-personalizado h4 { font-family: 'Dancing Script', cursive; font-size: 28px; color: #ff69b4; margin: 0; }
+        .detalles-evento { margin-top: 20px; text-align: center; }
+        .detalles-evento p { margin: 10px 0; font-size: 15px; color: #555; }
+        .detalles-evento i { color: #ffb6c1; width: 25px; }
+        .detalles-evento strong { color: #333; }
+        .contenedor-botones { display: flex; gap: 10px; }
+        #mensaje-despedida { display: none; text-align: center; padding: 20px; }
+        #mensaje-despedida i { font-size: 50px; color: #ffb6c1; margin-bottom: 15px; }
+
+        @media print {
+            body * { visibility: hidden; } 
+            #tarjeta-a-imprimir, #tarjeta-a-imprimir * { visibility: visible; } 
+            #tarjeta-a-imprimir { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; background: white; }
+            #contenedor-flores { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="contenedor-flores">
+        <span class="flor">&#127800;</span><span class="flor">&#127800;</span><span class="flor">&#127800;</span>
+        <span class="flor">&#127800;</span><span class="flor">&#127800;</span><span class="flor">&#127800;</span>
+        <span class="flor">&#127800;</span><span class="flor">&#127800;</span><span class="flor">&#127800;</span>
+        <span class="flor">&#127800;</span><span class="flor">&#127800;</span><span class="flor">&#127800;</span>
+        <span class="flor">&#127800;</span><span class="flor">&#127800;</span><span class="flor">&#127800;</span>
+        <span class="flor">&#127800;</span><span class="flor">&#127800;</span><span class="flor">&#127800;</span>
+        <span class="flor">&#127800;</span><span class="flor">&#127800;</span>
+    </div>
+
+    <div class="contenedor-formulario">
+        
+        <div id="seccion-formulario">
+            <h1>Registro de Invitados</h1>
+            <p class="subtitulo">¡Nos encantaría que nos acompañaras! Por favor, confirma tu asistencia.</p>
+            
+            <form id="form-registro" onsubmit="simularEnvio(event)">
+                <div class="grupo-input">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Ej. Familia Pérez o Juan López" required>
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <div class="grupo-input">
+                    <label>¿Podrás asistir?</label>
+                    <div class="opciones-radio">
+                        <label class="opcion-radio">
+                            <input type="radio" name="asistencia" value="Si" required onclick="mostrarCamposExtra(true)">
+                            <span>¡Sí, ahí estaré!</span>
+                        </label>
+                        <label class="opcion-radio">
+                            <input type="radio" name="asistencia" value="No" onclick="mostrarCamposExtra(false)">
+                            <span>Lo siento, no podré</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="datos-adicionales">
+                    <div class="grupo-input">
+                        <label for="boletos">Número de pases / acompañantes</label>
+                        <select id="boletos" name="boletos">
+                            <option value="1">1 (Solo yo)</option>
+                            <option value="2">2 Personas</option>
+                            <option value="3">3 Personas</option>
+                            <option value="4">4 Personas</option>
+                            <option value="5">5 Personas</option>
+                        </select>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="restricciones">¿Alguna alergia o restricción alimenticia?</label>
+                        <input type="text" id="restricciones" name="restricciones" placeholder="Ej. Ninguna, Vegetariano...">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="mensaje">Déjanos un mensaje (Opcional)</label>
+                        <textarea id="mensaje" name="mensaje" placeholder="¡Escribe tus buenos deseos aquí!"></textarea>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-submit" class="btn-enviar">Confirmar Asistencia <i class="fa-solid fa-heart"></i></button>
+            </form>
+        </div>
+
+        <div id="seccion-invitacion">
+            <h1>¡Estás en la lista!</h1>
+            <p class="subtitulo">Guarda esta invitación con los detalles de nuestro gran día.</p>
+            
+            <div class="tarjeta-invitacion" id="tarjeta-a-imprimir">
+                <h2>Bernardo & Alondra</h2>
+                <h3>Nuestra Boda</h3>
+                
+                <div class="nombre-personalizado">
+                    <p>Pase especial para:</p>
+                    <h4 id="nombre-display">Nombre del Invitado</h4>
+                </div>
+                
+                <div class="detalles-evento">
+                    <p><i class="fa-solid fa-calendar-days"></i> <strong>Sábado, 15 de Mayo de 2027</strong></p>
+                    <p><i class="fa-solid fa-clock"></i> <strong>4:00 PM</strong></p>
+                    <p><i class="fa-solid fa-location-dot"></i> <strong>Hacienda Los Cascabeles</strong><br>Tulancingo, Hidalgo</p>
+                </div>
+            </div>
+
+            <div class="contenedor-botones">
+                <button class="btn-secundario" onclick="descargarPDF()"><i class="fa-solid fa-file-pdf" style="color: #e2574c;"></i> Descargar PDF</button>
+                <button class="btn-secundario" onclick="window.print()"><i class="fa-solid fa-print"></i> Imprimir</button>
+            </div>
+            <button class="btn-enviar" style="width: 100%; margin-top: 15px;" onclick="window.location.href='index.html'">Volver al Inicio</button>
+        </div>
+
+        <div id="mensaje-despedida">
+            <i class="fa-solid fa-envelope-open-text"></i>
+            <h1 style="color: #333;">¡Te extrañaremos!</h1>
+            <p class="subtitulo">Lamentamos que no puedas acompañarnos, ¡pero te tendremos en nuestros corazones en este día tan especial!</p>
+            <button class="btn-enviar" style="width: 100%;" onclick="window.location.href='index.html'">Volver al Inicio</button>
+        </div>
+
+        <a href="index.html" class="enlace-volver" id="link-volver"><i class="fa-solid fa-arrow-left"></i> Volver a la página principal</a>
+    </div>
+
+    <script>
+        // ==========================================
+        // TRUCO PARA LA MÚSICA INVISIBLE
+        // ==========================================
+        let audioIniciado = false;
+        
+        function reproducirMusica() {
+            if (!audioIniciado) {
+                let audio = document.getElementById("musica-fondo");
+                audio.play().then(() => {
+                    audioIniciado = true;
+                }).catch(error => {
+                    // Si el navegador aún lo bloquea, no hacemos nada y espera al siguiente clic
+                });
+            }
+        }
+
+        // Escuchamos si el invitado hace clic o toca cualquier parte de la pantalla
+        document.addEventListener('click', reproducirMusica);
+        document.addEventListener('touchstart', reproducirMusica);
+        document.addEventListener('keydown', reproducirMusica);
+
+
+        // ==========================================
+        // LÓGICA DEL FORMULARIO
+        // ==========================================
+        function mostrarCamposExtra(asistira) {
+            const contenedorExtra = document.getElementById('datos-adicionales');
+            if(asistira) {
+                contenedorExtra.style.display = 'flex';
+                document.getElementById('boletos').required = true;
+            } else {
+                contenedorExtra.style.display = 'none';
+                document.getElementById('boletos').required = false;
+            }
+        }
+
+        function simularEnvio(event) {
+            event.preventDefault(); 
+            const btnSubmit = document.getElementById('btn-submit');
+            const asistencia = document.querySelector('input[name="asistencia"]:checked').value;
+            const nombreIngresado = document.getElementById('nombre').value; 
+
+            btnSubmit.innerHTML = 'Enviando... <i class="fa-solid fa-spinner fa-spin"></i>';
+            btnSubmit.disabled = true;
+
+            setTimeout(() => {
+                document.getElementById('seccion-formulario').style.display = 'none';
+                document.getElementById('link-volver').style.display = 'none';
+
+                if(asistencia === "Si") {
+                    document.getElementById('nombre-display').innerText = nombreIngresado;
+                    document.getElementById('seccion-invitacion').style.display = 'block';
+                } else {
+                    document.getElementById('mensaje-despedida').style.display = 'block';
+                }
+            }, 1000);
+        }
+
+        function descargarPDF() {
+            const elemento = document.getElementById('tarjeta-a-imprimir');
+            const opciones = {
+                margin:       0.5,
+                filename:     'Invitacion_Boda.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2 },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().set(opciones).from(elemento).save();
+        } 
+    </script>
+
+</body>
+</html>
