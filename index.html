@@ -646,21 +646,34 @@
         }
 
         // =========================================================
-        // RECUERDA: Si las fotos se siguen viendo rotas, es porque aquí
-        // necesitas pegar la NUEVA dirección que te dio el Apps Script
+        // CONFIGURACIÓN DE ENLACES SEPARADOS
         // =========================================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzG52-HE6aIo7o-QPsI0bT36AuPxnuaVFofNwBqwDUycL0_MV2UzNwky4Q-PwU3L3x2Sw/exec'; 
+        
+        // El enlace NUEVO que me pasaste (Ponlo aquí si este es el de los Comentarios)
+        const URL_COMENTARIOS = 'https://script.google.com/macros/s/AKfycbwMahJmz35iCCTIY0omQES4qWjohu1WMolXIo09iQCVqAnaEQMb1ggWfZeAsB15jDkVDg/exec'; 
+        
+        // El enlace de tu otro Script (El que se encarga de subir y leer las fotos)
+        const URL_GALERIA = 'https://script.google.com/macros/s/AKfycbzG52-HE6aIo7o-QPsI0bT36AuPxnuaVFofNwBqwDUycL0_MV2UzNwky4Q-PwU3L3x2Sw/exec'; 
 
+        // =========================================================
+        // 1. FUNCIÓN PARA LOS LINDOS MENSAJES (Usa URL_COMENTARIOS)
+        // =========================================================
         function enviarComentario(event) {
             event.preventDefault(); 
             const form = document.getElementById('form-comentario');
 
-            fetch(SCRIPT_URL, { 
+            // Recogemos los datos del formulario de forma segura
+            var datosEnvio = new URLSearchParams();
+            datosEnvio.append("nombre", document.getElementById('nombre-usuario').value);
+            datosEnvio.append("comentario", document.getElementById('texto-comentario').value);
+
+            // Se los enviamos a tu script de comentarios
+            fetch(URL_COMENTARIOS, { 
                 method: 'POST', 
-                body: new FormData(form),
-                mode: 'no-cors' 
+                body: datosEnvio,
+                mode: 'no-cors' // Evita problemas de bloqueo del navegador
             }).then(() => {
-                alert("Mensaje enviado con éxito!");
+                alert("¡Mensaje enviado con éxito! ❤️");
             }).catch(error => console.error('Error!', error.message));
 
             cerrarModal();
@@ -668,7 +681,7 @@
         }
 
         // =========================================================
-        // FUNCIONES NUEVAS PARA LA GALERÍA
+        // 2. FUNCIÓN PARA LA GALERÍA DE FOTOS (Usa URL_GALERIA)
         // =========================================================
         function subirFoto() {
             var fileInput = document.getElementById('input-foto');
@@ -697,7 +710,7 @@
                 formData.append("mimeType", mimeType);
                 formData.append("filename", file.name);
 
-                fetch(SCRIPT_URL, { method: 'POST', body: formData })
+                fetch(URL_GALERIA, { method: 'POST', body: formData })
                 .then(res => res.text())
                 .then(resultado => {
                     mensaje.innerText = "¡Foto subida con éxito! 🎉";
@@ -716,7 +729,7 @@
         }
 
         function cargarFotosNuevas() {
-            fetch(SCRIPT_URL + "?action=obtener_fotos")
+            fetch(URL_GALERIA + "?action=obtener_fotos")
             .then(res => res.json())
             .then(urls => {
                 var contenedor = document.getElementById('contenedor-fotos-dinamicas');
@@ -734,11 +747,10 @@
             .catch(error => console.error("Error al cargar fotos de Drive:", error));
         }
 
-        // Esto hace que las fotos se carguen solitas al entrar a la página
+        // Carga las fotos automáticamente al abrir la página
         window.onload = function() { 
             cargarFotosNuevas(); 
         };
     </script>
-
 </body>
 </html>
